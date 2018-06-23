@@ -28,8 +28,7 @@ public class BroadcastServer {
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                 receiveData.length);
         System.out.println("Listen " + Main.PORT);
-        while(isRunListener)
-        {
+        while(isRunListener) {
             socket.receive(receivePacket);
             if (!receivePacket.getAddress().getHostAddress().equals(InetAddress.getLocalHost().getHostAddress())) {
                 String message = new String( receivePacket.getData(), 0,
@@ -63,5 +62,6 @@ public class BroadcastServer {
                 System.out.println("RECEIVED: " + message);
             }
         }
+        socket.close();
     }
 }

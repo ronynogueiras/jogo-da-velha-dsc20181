@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -51,8 +52,9 @@ public class Controller {
             connectedUsers.add(userName);
     }
     public synchronized static void removeOfflineUser(String userName) {
-        if(connectedUsers.contains(userName))
-            connectedUsers.remove(userName);
+        if(connectedUsers.contains(userName)) {
+            Platform.runLater(() -> connectedUsers.remove(userName));
+        }
     }
     public static void closeGame() {
         try {
