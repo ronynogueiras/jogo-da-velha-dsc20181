@@ -49,8 +49,16 @@ public class Controller {
     };
 
     public synchronized static void addNewConnectedUser(Player player) {
-        if(!connectedUsers.contains(player))
-            connectedUsers.add(player);
+        boolean found = false;
+        for (Player p: connectedUsers) {
+            if (p.getIp().equals(player.getIp())) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            Platform.runLater(() -> connectedUsers.add(player));
+        }
     }
     public synchronized static void removeOfflineUser(String ip) {
         for (Player p: connectedUsers) {
@@ -91,7 +99,7 @@ public class Controller {
         try {
             int port;
             if (!isPlaying) {
-                port = new Random().nextInt((50000 - 65535) + 1) + 50000 ;
+                port = new Random().nextInt((65535 - 50000) + 1) + 50000;
                 new Thread(() -> new Server(port).init()).start();
                 isPlaying = true;
             } else {

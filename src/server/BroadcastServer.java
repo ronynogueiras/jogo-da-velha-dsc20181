@@ -12,6 +12,10 @@ public class BroadcastServer {
 
     public static boolean isRunListener = true;
 
+    public synchronized static void stop() {
+        isRunListener = false;
+    }
+
     public static void send(String message) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         socket.setBroadcast(true);

@@ -39,7 +39,7 @@ public class Main extends Application {
     @Override
     public void stop(){
         Controller.closeGame();
-        BroadcastServer.isRunListener = false;
+        BroadcastServer.stop();
         System.out.println("Stage is closing");
         // Save file
     }
