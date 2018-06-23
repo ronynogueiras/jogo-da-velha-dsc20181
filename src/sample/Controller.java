@@ -54,6 +54,16 @@ public class Controller {
         if(connectedUsers.contains(userName))
             connectedUsers.remove(userName);
     }
+    public static void closeGame() {
+        try {
+            if (playerName != null) {
+                BroadcastServer.send(MessageFormatter.format("03", playerName));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
     public static void broadcastLogin() {
         try {
             BroadcastServer.send(MessageFormatter.format("01", playerName));
@@ -127,8 +137,11 @@ public class Controller {
             statusConnection.setTextFill(Paint.valueOf("#8ECAE9"));
             playerName = this.inputLogin.getText();
             broadcastLogin();
-            statusConnection.setText("Conectado");
+            statusConnection.setText("Conectado: " + playerName);
             statusConnection.setTextFill(Paint.valueOf("#0DB18D"));
+            this.inputLogin.setText("");
+            this.inputLogin.setDisable(true);
+            btn.setDisable(true);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Aviso");
