@@ -34,7 +34,7 @@ public class Controller {
 
     public static boolean isInvited = false;
 
-    private static ObservableList<String> connectedUsers = FXCollections.observableArrayList();
+    private static ObservableList<Player> connectedUsers = FXCollections.observableArrayList();
 
     private char playerOne = 'X';
     private char playerTwo = 'O';
@@ -47,13 +47,17 @@ public class Controller {
             {' ', ' ', ' '}
     };
 
-    public synchronized static void addNewConnectedUser(String userName) {
-        if(!connectedUsers.contains(userName))
-            connectedUsers.add(userName);
+    public synchronized static void addNewConnectedUser(Player player) {
+        if(!connectedUsers.contains(player))
+            connectedUsers.add(player);
     }
-    public synchronized static void removeOfflineUser(String userName) {
-        if(connectedUsers.contains(userName)) {
-            Platform.runLater(() -> connectedUsers.remove(userName));
+    public synchronized static void removeOfflineUser(String ip) {
+        for (Player p: connectedUsers) {
+            if (!p.getIp().equals(ip)) {
+                continue;
+            }
+            Platform.runLater(() -> connectedUsers.remove(p));
+            break;
         }
     }
     public static void closeGame() {

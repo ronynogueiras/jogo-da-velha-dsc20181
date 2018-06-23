@@ -2,6 +2,7 @@ package server;
 
 import sample.Controller;
 import sample.Main;
+import sample.Player;
 import util.MessageInterpreter;
 
 import java.io.IOException;
@@ -38,16 +39,16 @@ public class BroadcastServer {
                 switch (code) {
                     case "01":
                         name = MessageInterpreter.getData(message);
-                        Controller.addNewConnectedUser(name + "_" +receivePacket.getAddress().toString());
+                        Controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
                         Controller.responseOnline();
                         break;
                     case "02":
                         name = MessageInterpreter.getData(message);
-                        Controller.addNewConnectedUser(name + "_" +receivePacket.getAddress().toString());
+                        Controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
                         break;
                     case "03":
                         name = MessageInterpreter.getData(message);
-                        Controller.removeOfflineUser(name + "_" +receivePacket.getAddress().toString());
+                        Controller.removeOfflineUser(receivePacket.getAddress().getHostAddress());
                         break;
                     case "04":
                         Controller.responseInvitation();
