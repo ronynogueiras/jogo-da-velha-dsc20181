@@ -10,12 +10,6 @@ import java.net.*;
 
 public class BroadcastServer {
 
-    public static boolean isRunListener = true;
-
-    public synchronized static void stop() {
-        isRunListener = false;
-    }
-
     public static void send(String message) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         socket.setBroadcast(true);
@@ -41,12 +35,13 @@ public class BroadcastServer {
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                 receiveData.length);
         System.out.println("Listen " + Main.PORT);
-        while(isRunListener) {
+        boolean run = true;
+        while(run) {
             socket.receive(receivePacket);
+            String message = new String( receivePacket.getData(), 0,
+                    receivePacket.getLength() );
+            String code = MessageInterpreter.getCode(message);
             if (!receivePacket.getAddress().getHostAddress().equals(InetAddress.getLocalHost().getHostAddress())) {
-                String message = new String( receivePacket.getData(), 0,
-                        receivePacket.getLength() );
-                String code = MessageInterpreter.getCode(message);
                 String name;
                 switch (code) {
                     case "01":

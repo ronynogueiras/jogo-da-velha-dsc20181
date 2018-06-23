@@ -1,14 +1,11 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import server.BroadcastServer;
-import server.Server;
-import util.MessageFormatter;
 
 import java.io.IOException;
 
@@ -16,18 +13,19 @@ import java.io.IOException;
 public class Main extends Application {
 
     public static int PORT = 20181;
-    private BroadcastServer udpServer;
-
+    private Thread udpServer;
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        new Thread(() -> {
+        udpServer = new Thread(() -> {
             try {
                 BroadcastServer.listener();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        udpServer.start();
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         Scene scene = new Scene(root, 620, 540);
@@ -39,7 +37,6 @@ public class Main extends Application {
     @Override
     public void stop(){
         Controller.closeGame();
-        BroadcastServer.stop();
         System.out.println("Stage is closing");
         // Save file
     }
