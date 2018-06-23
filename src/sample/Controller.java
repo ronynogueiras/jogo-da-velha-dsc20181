@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -86,16 +87,17 @@ public class Controller {
             e.printStackTrace();
         }
     }
-    public static  void responseInvitation() {
+    public static  void responseInvitation(String ip) {
         try {
             int port;
-            if (isPlaying) {
+            if (!isPlaying) {
                 port = new Random().nextInt((50000 - 65535) + 1) + 50000 ;
                 new Thread(() -> new Server(port).init()).start();
+                isPlaying = true;
             } else {
                 port = 0;
             }
-            BroadcastServer.send(MessageFormatter.format("05", playerName + "|" + port));
+            BroadcastServer.send(MessageFormatter.format("05", playerName + "|" + port), ip);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,7 +133,16 @@ public class Controller {
         this.pointsPlayerOne.setText("0");
         this.pointsPlayerTwo.setText("0");
         this.listOnlinePlayers.setItems(connectedUsers);
-
+        this.listOnlinePlayers.setOnMousePressed(event -> {
+            if(event.getClickCount() == 2) {
+                Player p = (Player) listOnlinePlayers.getSelectionModel().getSelectedItem();
+                try {
+                    BroadcastServer.send(MessageFormatter.format("04", playerName), p.getIp());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
     @FXML
     private void login(ActionEvent event) {

@@ -21,6 +21,14 @@ public class BroadcastServer {
         socket.close();
         System.out.println("Send: " + message);
     }
+    public static void send(String message, String ip) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+        byte[] buffer = message.getBytes();
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(ip), Main.PORT);
+        socket.send(packet);
+        socket.close();
+        System.out.println("Send: " + message + ", HOST: " + ip );
+    }
     public static void listener() throws IOException {
         System.out.printf("Listening on udp:%s:%d%n",
                 InetAddress.getByName("0.0.0.0"), Main.PORT);
@@ -47,11 +55,10 @@ public class BroadcastServer {
                         Controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
                         break;
                     case "03":
-                        name = MessageInterpreter.getData(message);
                         Controller.removeOfflineUser(receivePacket.getAddress().getHostAddress());
                         break;
                     case "04":
-                        Controller.responseInvitation();
+                        Controller.responseInvitation(receivePacket.getAddress().getHostAddress());
                         break;
                     case "05":
                         Controller.responseConfirmation();
