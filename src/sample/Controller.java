@@ -63,7 +63,9 @@ public class Controller {
     }
     public static void responseOnline() {
         try {
-            BroadcastServer.send(MessageFormatter.format("02", playerName));
+            if (playerName != null) {
+                BroadcastServer.send(MessageFormatter.format("02", playerName));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
