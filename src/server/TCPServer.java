@@ -30,7 +30,7 @@ public class TCPServer {
         System.out.println(ip + ", " + message);
         Socket socket = new Socket(ip, this.port);
         DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-        outToServer.writeBytes(message);
+        outToServer.writeUTF(message);
         socket.close();
     }
     public void send(String ip, String message, int port) throws IOException {
