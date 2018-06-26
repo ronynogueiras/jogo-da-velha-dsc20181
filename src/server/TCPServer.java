@@ -57,28 +57,23 @@ public class TCPServer {
 
                 output.writeUTF("Connection stable...");
                 while (true) {
-                    try {
-                        message = input.readUTF();
-                        System.out.println(message);
-                        String code = MessageInterpreter.getCode(message);
-                        switch (code) {
-                            case "07":
-                                System.out.println("07");
-                                break;
-                            case "08":
-                                int pos = Integer.valueOf(MessageInterpreter.getData(message));
-                                controller.setPosition(pos);
-                                break;
-                            case "09":
-                                controller.newMatch();
-                                break;
-                            case "10":
-                                controller.finishGame();
-                                break;
-                        }
-                        output.writeObject(message);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                    message = input.readUTF();
+                    System.out.println(message);
+                    String code = MessageInterpreter.getCode(message);
+                    switch (code) {
+                        case "07":
+                            System.out.println("07");
+                            break;
+                        case "08":
+                            int pos = Integer.valueOf(MessageInterpreter.getData(message));
+                            controller.setPosition(pos);
+                            break;
+                        case "09":
+                            controller.newMatch();
+                            break;
+                        case "10":
+                            controller.finishGame();
+                            break;
                     }
                 }
 //                finish = true;
