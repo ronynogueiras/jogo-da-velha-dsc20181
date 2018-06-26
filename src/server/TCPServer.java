@@ -4,8 +4,10 @@ import sample.Controller;
 import util.MessageInterpreter;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class TCPServer {
 
@@ -25,7 +27,15 @@ public class TCPServer {
         return this;
     }
     public void send(String ip, String message) throws IOException {
+        System.out.println(ip + ", " + message);
         Socket socket = new Socket(ip, this.port);
+        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+        outToServer.writeBytes(message);
+        socket.close();
+    }
+    public void send(String ip, String message, int port) throws IOException {
+        System.out.println(ip + ", " + message);
+        Socket socket = new Socket(ip, port);
         DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
         outToServer.writeBytes(message);
         socket.close();
@@ -33,7 +43,7 @@ public class TCPServer {
     public void init() {
         System.out.println("INIT TCP SERVER!");
         try {
-            ServerSocket server = new ServerSocket(this.port);
+            ServerSocket server = new ServerSocket(this.port);;
             Socket conn;
             ObjectOutputStream output;
             ObjectInputStream input;
@@ -45,10 +55,10 @@ public class TCPServer {
                 output = new ObjectOutputStream(conn.getOutputStream());
                 input = new ObjectInputStream(conn.getInputStream());
 
-                output.writeObject("Connection stable...");
+                output.writeUTF("Connection stable...");
                 while (true) {
                     try {
-                        message = (String) input.readObject();
+                        message = input.readUTF();
                         System.out.println(message);
                         String code = MessageInterpreter.getCode(message);
                         switch (code) {

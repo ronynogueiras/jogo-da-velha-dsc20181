@@ -72,7 +72,10 @@ public class UDPServer{
                         controller.responseInvitation(receivePacket.getAddress().getHostAddress());
                         break;
                     case "05":
-                        controller.responseConfirmation();
+                        System.out.println(message);
+                        String[] parts = MessageInterpreter.getData(message).split("\\|");
+                        int port = Integer.valueOf(parts[1]);
+                        controller.responseConfirmation(receivePacket.getAddress().getHostAddress(), port);
                         break;
                     case "06":
                         controller.startGame();

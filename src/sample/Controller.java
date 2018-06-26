@@ -37,6 +37,7 @@ public class Controller {
     private boolean isInvited = false;
 
     private String playerIp = null;
+    private int playerPort = 0;
 
     private UDPServer udpServer;
     private TCPServer tcpServer;
@@ -122,9 +123,16 @@ public class Controller {
             e.printStackTrace();
         }
     }
-    public void responseConfirmation() {
+    public void responseConfirmation(String ip, int port) {
         try {
-            udpServer.sendMessage(MessageFormatter.format("06", "OK"), playerIp);
+            if (port > 0) {
+                playerIp = ip;
+                udpServer.sendMessage(MessageFormatter.format("06", "OK"), playerIp);
+                tcpServer = new TCPServer(port).setIp(playerIp);
+                threadTCP = new Thread(() -> tcpServer.init());
+                threadTCP.start();
+                playerPort = port;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,10 +173,12 @@ public class Controller {
     }
     public void startGame() {
         try {
+            System.out.println("START GAME! ");
             if (playerIp != null) {
+                System.out.println("START GAME! 2");
                 String type = isInvited ? "1" : "2";
 
-                tcpServer.send(playerIp, MessageFormatter.format("07", type));
+                tcpServer.send(playerIp, MessageFormatter.format("07", type), playerPort);
             }
         }catch (IOException e) {
             e.printStackTrace();
