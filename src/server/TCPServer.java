@@ -31,6 +31,7 @@ public class TCPServer {
         socket.close();
     }
     public void init() {
+        System.out.println("INIT TCP SERVER!");
         try {
             ServerSocket server = new ServerSocket(this.port);
             Socket conn;
@@ -48,10 +49,11 @@ public class TCPServer {
                 while (true) {
                     try {
                         message = (String) input.readObject();
+                        System.out.println(message);
                         String code = MessageInterpreter.getCode(message);
                         switch (code) {
                             case "07":
-
+                                System.out.println("07");
                                 break;
                             case "08":
                                 int pos = Integer.valueOf(MessageInterpreter.getData(message));
