@@ -8,33 +8,45 @@ import util.MessageInterpreter;
 import java.io.IOException;
 import java.net.*;
 
-public class BroadcastServer {
+public class UDPServer{
 
-    public static void send(String message) throws IOException {
+    private Controller controller;
+    private String broadcastSender = "255.255.255.255";
+    private String broadcastListener = "0.0.0.0";
+    private int port = 20181;
+
+    public UDPServer setController(Controller controller) {
+        this.controller = controller;
+        return this;
+    }
+
+    public UDPServer sendBroadcast(String message) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         socket.setBroadcast(true);
         byte[] buffer = message.getBytes();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), Main.PORT);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(broadcastSender), port);
         socket.send(packet);
         socket.close();
         System.out.println("Send: " + message);
+        return this;
     }
-    public static void send(String message, String ip) throws IOException {
+    public UDPServer sendMessage(String message, String ip) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         byte[] buffer = message.getBytes();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(ip), Main.PORT);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(ip), port);
         socket.send(packet);
         socket.close();
         System.out.println("Send: " + message + ", HOST: " + ip );
+        return this;
     }
-    public static void listener() throws IOException {
+    public void broadcastListener() throws IOException {
         System.out.printf("Listening on udp:%s:%d%n",
-                InetAddress.getByName("0.0.0.0"), Main.PORT);
-        DatagramSocket  socket = new DatagramSocket(Main.PORT, InetAddress.getByName("0.0.0.0"));
-        byte[] receiveData = new byte[128];
+                InetAddress.getByName("0.0.0.0"), port);
+        DatagramSocket  socket = new DatagramSocket(port, InetAddress.getByName(broadcastListener));
+        byte[] receiveData = new byte[256];
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                 receiveData.length);
-        System.out.println("Listen " + Main.PORT);
+        System.out.println("Listen " + port);
         boolean run = true;
         while(run) {
             socket.receive(receivePacket);
@@ -46,24 +58,24 @@ public class BroadcastServer {
                 switch (code) {
                     case "01":
                         name = MessageInterpreter.getData(message);
-                        Controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
-                        Controller.responseOnline();
+                        controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
+                        controller.responseOnline();
                         break;
                     case "02":
                         name = MessageInterpreter.getData(message);
-                        Controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
+                        controller.addNewConnectedUser(new Player(name, receivePacket.getAddress().getHostAddress(), true));
                         break;
                     case "03":
-                        Controller.removeOfflineUser(receivePacket.getAddress().getHostAddress());
+                        controller.removeOfflineUser(receivePacket.getAddress().getHostAddress());
                         break;
                     case "04":
-                        Controller.responseInvitation(receivePacket.getAddress().getHostAddress());
+                        controller.responseInvitation(receivePacket.getAddress().getHostAddress());
                         break;
                     case "05":
-                        Controller.responseConfirmation();
+                        controller.responseConfirmation();
                         break;
                     case "06":
-                        Controller.startGame();
+                        controller.startGame();
                         break;
                 }
                 System.out.println("RECEIVED: " + message);

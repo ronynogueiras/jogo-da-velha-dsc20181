@@ -4,14 +4,13 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
-import server.BroadcastServer;
-import server.Server;
+import server.TCPServer;
+import server.UDPServer;
 import util.MessageFormatter;
 
 import java.io.IOException;
@@ -28,27 +27,36 @@ public class Controller {
     private ListView listOnlinePlayers;
     @FXML
     private TextField inputLogin;
+    @FXML
+    private GridPane gridBoard;
 
     private static String playerName;
 
-    private static boolean isPlaying = false;
+    private boolean isPlaying = false;
 
-    public static boolean isInvited = false;
+    private boolean isInvited = false;
 
-    private static ObservableList<Player> connectedUsers = FXCollections.observableArrayList();
+    private String playerIp = null;
+
+    private UDPServer udpServer;
+    private TCPServer tcpServer;
+    private Thread threadUDP;
+    private Thread threadTCP;
+
+    private ObservableList<Player> connectedUsers = FXCollections.observableArrayList();
 
     private char playerOne = 'X';
     private char playerTwo = 'O';
 
     private char current = 'X';
 
-    private char[][] board = new char[][]{
+    private static char[][] board = new char[][]{
             {' ', ' ', ' '},
             {' ', ' ', ' '},
             {' ', ' ', ' '}
     };
 
-    public synchronized static void addNewConnectedUser(Player player) {
+    public synchronized void addNewConnectedUser(Player player) {
         boolean found = false;
         for (Player p: connectedUsers) {
             if (p.getIp().equals(player.getIp())) {
@@ -60,7 +68,7 @@ public class Controller {
             Platform.runLater(() -> connectedUsers.add(player));
         }
     }
-    public synchronized static void removeOfflineUser(String ip) {
+    public synchronized void removeOfflineUser(String ip) {
         for (Player p: connectedUsers) {
             if (!p.getIp().equals(ip)) {
                 continue;
@@ -69,74 +77,118 @@ public class Controller {
             break;
         }
     }
-    public static void closeGame() {
+    public void closeGame() {
         try {
             if (playerName != null) {
-                BroadcastServer.send(MessageFormatter.format("03", playerName));
+                udpServer.sendBroadcast(MessageFormatter.format("03", playerName));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-    public static void broadcastLogin() {
+    public void broadcastLogin() {
         try {
-            BroadcastServer.send(MessageFormatter.format("01", playerName));
+            udpServer.sendBroadcast(MessageFormatter.format("01", playerName));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static void responseOnline() {
+    public void responseOnline() {
         try {
             if (playerName != null) {
-                BroadcastServer.send(MessageFormatter.format("02", playerName));
+                udpServer.sendBroadcast(MessageFormatter.format("02", playerName));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static  void responseInvitation(String ip) {
+    public void responseInvitation(String ip) {
         try {
             int port;
             if (!isPlaying) {
                 port = new Random().nextInt((65535 - 50000) + 1) + 50000;
-                new Thread(() -> new Server(port).init()).start();
+                tcpServer = new TCPServer(port).setController(this);
+                threadTCP = new Thread(() -> tcpServer.init());
+                threadTCP.start();
                 isPlaying = true;
+                playerIp = ip;
+                isInvited = true;
             } else {
                 port = 0;
             }
-            BroadcastServer.send(MessageFormatter.format("05", playerName + "|" + port), ip);
+            udpServer.sendMessage(MessageFormatter.format("05", playerName + "|" + port), ip);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static void responseConfirmation() {
+    public void responseConfirmation() {
         try {
-            BroadcastServer.send(MessageFormatter.format("06", "OK"));
+            udpServer.sendMessage(MessageFormatter.format("06", "OK"), playerIp);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static void setPosition(int pos) {
+    public void setPosition(int pos) {
         switch (pos) {
             case 1:
+                board[0][0] = 'X';
                 break;
             case 2:
+                board[0][1] = 'X';
                 break;
-
+            case 3:
+                board[0][2] = 'X';
+                break;
+            case 4:
+                board[1][0] = 'X';
+                break;
+            case 5:
+                board[1][1] = 'X';
+                break;
+            case 6:
+                board[1][2] = 'X';
+                break;
+            case 7:
+                board[2][0] = 'X';
+                break;
+            case 8:
+                board[2][1] = 'X';
+                break;
+            case 9:
+                board[2][2] = 'X';
+                break;
         }
     }
-    public static void newMatch() {
-        // new match
+    public void newMatch() {
+        System.out.println("NEW MATCH");
     }
-    public static void startGame() {
-        // start
+    public void startGame() {
+        try {
+            if (playerIp != null) {
+                String type = isInvited ? "1" : "2";
+
+                tcpServer.send(playerIp, MessageFormatter.format("07", type));
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
-    public static void finishGame() {
-        // finish game
+    public void finishGame() {
+        System.out.println("FINISH GAME");
     }
     @FXML
     private void initialize() {
+        udpServer = new UDPServer().setController(this);
+        threadUDP = new Thread(() -> {
+            try {
+                udpServer.broadcastListener();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        threadUDP.start();
         this.currentPlayer.setText(String.valueOf(this.current));
         this.pointsPlayerOne.setText("0");
         this.pointsPlayerTwo.setText("0");
@@ -145,7 +197,7 @@ public class Controller {
             if(event.getClickCount() == 2) {
                 Player p = (Player) listOnlinePlayers.getSelectionModel().getSelectedItem();
                 try {
-                    BroadcastServer.send(MessageFormatter.format("04", playerName), p.getIp());
+                    udpServer.sendMessage(MessageFormatter.format("04", playerName), p.getIp());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

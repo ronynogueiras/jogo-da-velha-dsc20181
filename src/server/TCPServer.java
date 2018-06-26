@@ -7,14 +7,29 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class TCPServer {
 
     private int port;
+    private String ip;
+    private Controller controller;
 
-    public Server(int port) {
+    public TCPServer(int port) {
         this.port = port;
     }
-
+    public TCPServer setController(Controller controller) {
+        this.controller = controller;
+        return this;
+    }
+    public TCPServer setIp(String ip) {
+        this.ip = ip;
+        return this;
+    }
+    public void send(String ip, String message) throws IOException {
+        Socket socket = new Socket(ip, this.port);
+        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+        outToServer.writeBytes(message);
+        socket.close();
+    }
     public void init() {
         try {
             ServerSocket server = new ServerSocket(this.port);
@@ -40,13 +55,13 @@ public class Server {
                                 break;
                             case "08":
                                 int pos = Integer.valueOf(MessageInterpreter.getData(message));
-                                Controller.setPosition(pos);
+                                controller.setPosition(pos);
                                 break;
                             case "09":
-                                Controller.newMatch();
+                                controller.newMatch();
                                 break;
                             case "10":
-                                Controller.finishGame();
+                                controller.finishGame();
                                 break;
                         }
                         output.writeObject(message);
