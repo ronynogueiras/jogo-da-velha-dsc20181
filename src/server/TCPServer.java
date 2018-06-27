@@ -28,17 +28,20 @@ public class TCPServer {
     }
     public void send(String ip, String message) throws IOException {
         System.out.println(ip + ", " + message);
-        Socket socket = new Socket(ip, this.port);
+        Socket socket = new Socket(InetAddress.getByName(ip), this.port);
         DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
         outToServer.writeUTF(message);
         socket.close();
     }
     public void send(String ip, String message, int port) throws IOException {
         System.out.println(ip + ", " + message);
-        Socket socket = new Socket(ip, port);
+        Socket socket = new Socket(InetAddress.getByName(ip), port);
         DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-        outToServer.writeBytes(message);
+        outToServer.writeUTF(message);
         socket.close();
+    }
+    public void listener(String ip, int port) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(ip), port);
     }
     public void init() {
         System.out.println("INIT TCP SERVER!");

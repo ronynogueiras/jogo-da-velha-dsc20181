@@ -29,6 +29,25 @@ public class Controller {
     private TextField inputLogin;
     @FXML
     private GridPane gridBoard;
+    @FXML
+    private Label p1;
+    @FXML
+    private Label p2;
+    @FXML
+    private Label p3;
+    @FXML
+    private Label p4;
+    @FXML
+    private Label p5;
+    @FXML
+    private Label p6;
+    @FXML
+    private Label p7;
+    @FXML
+    private Label p8;
+    @FXML
+    private Label p9;
+
 
     private static String playerName;
 
@@ -51,11 +70,7 @@ public class Controller {
 
     private char current = 'X';
 
-    private static char[][] board = new char[][]{
-            {' ', ' ', ' '},
-            {' ', ' ', ' '},
-            {' ', ' ', ' '}
-    };
+    private char[] board = new char[10];
 
     public synchronized void addNewConnectedUser(Player player) {
         boolean found = false;
@@ -128,8 +143,14 @@ public class Controller {
             if (port > 0) {
                 playerIp = ip;
                 udpServer.sendMessage(MessageFormatter.format("06", "OK"), playerIp);
-                tcpServer = new TCPServer(port).setIp(playerIp);
-                threadTCP = new Thread(() -> tcpServer.init());
+                tcpServer = new TCPServer(port);
+                threadTCP = new Thread(() -> {
+                    try {
+                        tcpServer.listener(playerIp, port);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
                 threadTCP.start();
                 playerPort = port;
             }
@@ -138,34 +159,42 @@ public class Controller {
         }
     }
     public void setPosition(int pos) {
-        switch (pos) {
-            case 1:
-                board[0][0] = 'X';
-                break;
-            case 2:
-                board[0][1] = 'X';
-                break;
-            case 3:
-                board[0][2] = 'X';
-                break;
-            case 4:
-                board[1][0] = 'X';
-                break;
-            case 5:
-                board[1][1] = 'X';
-                break;
-            case 6:
-                board[1][2] = 'X';
-                break;
-            case 7:
-                board[2][0] = 'X';
-                break;
-            case 8:
-                board[2][1] = 'X';
-                break;
-            case 9:
-                board[2][2] = 'X';
-                break;
+        if (board[pos] == ' ') {
+            board[pos] = 'X';
+            switch (pos) {
+                case 1:
+                    p1.setText("X");
+                    break;
+                case 2:
+                    p2.setText("X");
+                    break;
+                case 3:
+                    p3.setText("X");
+                    break;
+                case 4:
+                    p4.setText("X");
+                    break;
+                case 5:
+                    p5.setText("X");
+                    break;
+                case 6:
+                    p6.setText("X");
+                    break;
+                case 7:
+                    p7.setText("X");
+                    break;
+                case 8:
+                    p8.setText("X");
+                    break;
+                case 9:
+                    p9.setText("X");
+                    break;
+            }
+            if (isWinner()) {
+                System.out.println("Winner!");
+            }
+        } else {
+            System.out.println("HAS SELECTED!");
         }
     }
     public void newMatch() {
@@ -199,6 +228,9 @@ public class Controller {
             }
         });
         threadUDP.start();
+        for(int i=0;i<board.length;i++) {
+            board[i] = ' ';
+        }
         this.currentPlayer.setText(String.valueOf(this.current));
         this.pointsPlayerOne.setText("0");
         this.pointsPlayerTwo.setText("0");
@@ -240,40 +272,42 @@ public class Controller {
     }
     @FXML
     private void boardItemSelected(MouseEvent event) {
+        int pos = 0;
         Label label = (Label) event.getSource();
         char[] position = label.getId().toCharArray();
-        int row = Integer.valueOf(Character.toString(position[1]));
-        int col = Integer.valueOf(Character.toString(position[2]));
-        if (board[row][col] == ' ') {
-            board[row][col] = this.current;
-            label.setText(String.valueOf(this.current));
-            if (this.isWinner()) {
-                this.addPoint();
+        pos = Integer.valueOf(Character.toString(position[1]));
+        setPosition(pos);
 
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Vencedor!");
-                alert.setHeaderText(null);
-                alert.setContentText(this.currentPlayer.getText() + ", você venceu !! Parabéns !!");
-                alert.showAndWait();
-                ((Button) label.getParent().getParent().lookup("#resetBoard")).fire();
-            }
-            if (this.isDrew()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Empate!");
-                alert.setHeaderText(null);
-                alert.setContentText("O jogo terminou empatado.");
-                alert.showAndWait();
-                ((Button) label.getParent().getParent().lookup("#resetBoard")).fire();
-            }
-            this.current = this.current == 'X' ? 'O' : 'X';
-            this.currentPlayer.setText(this.current == 'X' ? "Jogador 1" : "Jogador 2");
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Alerta!");
-            alert.setHeaderText(null);
-            alert.setContentText("Esta posição já foi selecionada");
-            alert.showAndWait();
-        }
+//        if (board[row][col] == ' ') {
+//            board[row][col] = this.current;
+//            label.setText(String.valueOf(this.current));
+//            if (this.isWinner()) {
+//                this.addPoint();
+//
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Vencedor!");
+//                alert.setHeaderText(null);
+//                alert.setContentText(this.currentPlayer.getText() + ", você venceu !! Parabéns !!");
+//                alert.showAndWait();
+//                ((Button) label.getParent().getParent().lookup("#resetBoard")).fire();
+//            }
+//            if (this.isDrew()) {
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Empate!");
+//                alert.setHeaderText(null);
+//                alert.setContentText("O jogo terminou empatado.");
+//                alert.showAndWait();
+//                ((Button) label.getParent().getParent().lookup("#resetBoard")).fire();
+//            }
+//            this.current = this.current == 'X' ? 'O' : 'X';
+//            this.currentPlayer.setText(this.current == 'X' ? "Jogador 1" : "Jogador 2");
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Alerta!");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Esta posição já foi selecionada");
+//            alert.showAndWait();
+//        }
     }
     private void addPoint() {
         if (this.current == 'X') {
@@ -283,52 +317,41 @@ public class Controller {
         }
     }
     private boolean isWinner() {
-        for (int i = 0; i < this.board.length; i++) {
-            int rowSelecteds = 0;
 
-            if (this.board[0][i] == this.current && this.board[1][i] == this.current && this.board[2][i] == this.current) {
-                return true;
-            }
-            if (this.board[0][0] == this.current && this.board[1][1] == this.current && this.board[2][2] == this.current) {
-                return true;
-            }
-            if (this.board[2][0] == this.current && this.board[1][1] == this.current && this.board[0][2] == this.current) {
-                return true;
-            }
-
-            for (int j = 0; j < this.board[i].length; j++) {
-                if (this.board[i][j] == this.current) {
-                    rowSelecteds++;
-                }
-            }
-
-            if (rowSelecteds == 3 ) {
-                return true;
-            }
+        if (board[1] == 'X' && board[2] == 'X' && board[3] == 'X') {
+            return true;
+        }
+        if (board[4] == 'X' && board[5] == 'X' && board[6] == 'X') {
+            return true;
+        }
+        if (board[7] == 'X' && board[8] == 'X' && board[9] == 'X') {
+            return true;
+        }
+        if (board[1] == 'X' && board[4] == 'X' && board[7] == 'X') {
+            return true;
+        }
+        if (board[2] == 'X' && board[5] == 'X' && board[8] == 'X') {
+            return true;
+        }
+        if (board[3] == 'X' && board[6] == 'X' && board[9] == 'X') {
+            return true;
+        }
+        if (board[1] == 'X' && board[5] == 'X' && board[9] == 'X') {
+            return true;
+        }
+        if (board[3] == 'X' && board[5] == 'X' && board[7] == 'X') {
+            return true;
         }
         return false;
     }
     private boolean isDrew() {
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[i].length; j++) {
-                if (this.board[i][j] == ' ') {
-                    return false;
-                }
-            }
-        }
-        return !this.isWinner();
+        return false;
     }
     @FXML
     private void resetBoard(ActionEvent event) {
         Button btn =  (Button) event.getSource();
         GridPane gridBoard = (GridPane) btn.getParent().lookup("#gridBoard");
 
-        for (int i = 0; i < this.board.length; i++) {
-            for (int j = 0; j < this.board[i].length; j++) {
-                ((Label) gridBoard.lookup("#p" + i + "" + j)).setText(" ");
-                this.board[i][j] = ' ';
-            }
-        }
         this.current = 'X';
         this.currentPlayer.setText("Jogador 1");
     }

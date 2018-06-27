@@ -24,39 +24,39 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label fx:id="p00" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS">
+            <Label fx:id="p1" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p10" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.rowIndex="1">
+            <Label fx:id="p4" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.rowIndex="1">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p11" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label fx:id="p5" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1" GridPane.rowIndex="1">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p20" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.rowIndex="2">
+            <Label fx:id="p7" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.rowIndex="2">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p21" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label fx:id="p8" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p01" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1">
+            <Label fx:id="p2" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="1">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p02" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2">
+            <Label fx:id="p3" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p12" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Label fx:id="p6" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2" GridPane.rowIndex="1">
                <font>
                   <Font size="40.0" />
                </font></Label>
-            <Label fx:id="p22" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <Label fx:id="p9" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#boardItemSelected" prefHeight="98.0" prefWidth="110.0" text=" " GridPane.columnIndex="2" GridPane.rowIndex="2">
                <font>
                   <Font size="40.0" />
                </font></Label>
