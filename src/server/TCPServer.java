@@ -14,6 +14,7 @@ public class TCPServer {
     private int port;
     private String ip;
     private Controller controller;
+    private String message = null;
 
     public TCPServer(int port) {
         this.port = port;
@@ -33,7 +34,8 @@ public class TCPServer {
         outToServer.writeUTF(message);
         socket.close();
     }
-    public void send(String ip, String message, int port) throws IOException {
+    public void send(String message) throws IOException {
+        this.message = message;
         System.out.println(ip + ", " + message);
 //        Socket socket = new Socket(InetAddress.getByName(ip), port);
 //        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
@@ -45,9 +47,14 @@ public class TCPServer {
             Socket socket = new Socket(InetAddress.getByName(ip), port);
             while(true) {
                 ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                String message = input.readUTF();
-                if (!message.equals("")) {
-                    System.out.println(message);
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                String receive = input.readUTF();
+                if (!receive.equals("")) {
+                    System.out.println(receive);
+                }
+                if (message != null) {
+                    output.writeUTF(message);
+                    message = null;
                 }
             }
         }
