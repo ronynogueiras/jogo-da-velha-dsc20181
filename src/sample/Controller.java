@@ -207,7 +207,7 @@ public class Controller {
                 System.out.println("START GAME! 2");
                 String type = isInvited ? "1" : "2";
 
-                tcpServer.send(playerIp, MessageFormatter.format("07", type), playerPort);
+                tcpServer.send(MessageFormatter.format("07", type));
             }
         }catch (IOException e) {
             e.printStackTrace();
