@@ -43,25 +43,20 @@ public class TCPServer {
 //        socket.close();
     }
     public void listener(String ip, int port) throws IOException {
-        try {
-            Socket socket = new Socket(InetAddress.getByName(ip), port);
-            while(true) {
-                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                String receive = input.readUTF();
-                if (!receive.equals("")) {
-                    System.out.println(receive);
-                }
-                if (message != null) {
-                    output.writeUTF(message);
-                    message = null;
-                }
+        System.out.println("LISTENER");
+        Socket socket = new Socket(InetAddress.getByName(ip), port);
+        while(true) {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            String receive = input.readUTF();
+            if (!receive.equals("")) {
+                System.out.println(receive);
+            }
+            if (message != null) {
+                output.writeUTF(message);
+                message = null;
             }
         }
-        catch(Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
-        System.out.println("LISTENER");
     }
     public void init() {
         System.out.println("INIT TCP SERVER!");
