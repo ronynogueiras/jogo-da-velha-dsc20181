@@ -34,20 +34,32 @@ public class TCPServer {
         outToServer.writeUTF(message);
         socket.close();
     }
-    public void send(String message) throws IOException {
-        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-        outToServer.writeUTF(message);
+    public synchronized void send(String message) throws IOException {
+        this.message = message;
+//        ObjectOutputStream outToServer = new ObjectOutputStream(socket.getOutputStream());
+//        outToServer.writeObject(message);
     }
     public void listener(String ip, int port) throws IOException {
+        System.out.println("LISTENER");
         this.socket = new Socket(InetAddress.getByName(ip), port);
         ObjectInputStream input;
         ObjectOutputStream output;
         while(true) {
+            System.out.println("WHILE");
             input = new ObjectInputStream(this.socket.getInputStream());
             output = new ObjectOutputStream(this.socket.getOutputStream());
-            String receive = input.readUTF();
-            System.out.println("CLIENT: " + receive);
-            output.writeUTF("TESTE");
+            if (message != null) {
+                output.writeObject(message);
+                message = null;
+            }
+            String receive = null;
+            try {
+                receive = (String) input.readObject();
+                System.out.println("CLIENT: " + receive);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
         }
     }
     public void init() {
@@ -58,14 +70,22 @@ public class TCPServer {
             ObjectInputStream input;
             String message = "";
             boolean finish = false;
-            while(!finish) {
+            while(true) {
+                System.out.println("SERVER SOCKET");
                 conn = server.accept();
-                output = new ObjectOutputStream(conn.getOutputStream());
-                input = new ObjectInputStream(conn.getInputStream());
+                while(true) {
+                    System.out.println("ACCEPT");
+                    output = new ObjectOutputStream(conn.getOutputStream());
+                    input = new ObjectInputStream(conn.getInputStream());
 
-                output.writeUTF("Connection stable...");
-                message = input.readUTF();
-                System.out.println("SERVER:  " + message);
+                    output.writeObject("Connection stable...");
+                    try {
+                        message = (String) input.readObject();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("SERVER:  " + message);
+                }
 //                String code = MessageInterpreter.getCode(message);
 //                switch (code) {
 //                    case "07":

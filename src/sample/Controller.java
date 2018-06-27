@@ -162,15 +162,15 @@ public class Controller {
         System.out.println("NEW MATCH");
     }
     public void startGame() {
-        try {
-            System.out.println("START GAME! ");
-            String type = isInvited ? "1" : "2";
+        System.out.println("START GAME! ");
+        String type = isInvited ? "1" : "2";
             if (tcpServer != null) {
-                tcpServer.send(MessageFormatter.format("07", type));
+                try {
+                    tcpServer.send(MessageFormatter.format("07", type));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
     public void finishGame() {
