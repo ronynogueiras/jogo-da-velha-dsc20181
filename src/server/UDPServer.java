@@ -27,7 +27,7 @@ public class UDPServer{
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(broadcastSender), port);
         socket.send(packet);
         socket.close();
-        System.out.println("Send: " + message);
+//        System.out.println("Send: " + message);
         return this;
     }
     public UDPServer sendMessage(String message, String ip) throws IOException {
@@ -36,17 +36,16 @@ public class UDPServer{
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(ip), port);
         socket.send(packet);
         socket.close();
-        System.out.println("Send: " + message + ", HOST: " + ip );
+//        System.out.println("Send: " + message + ", HOST: " + ip );
         return this;
     }
     public void broadcastListener() throws IOException {
-        System.out.printf("Listening on udp:%s:%d%n",
-                InetAddress.getByName("0.0.0.0"), port);
+//        System.out.printf("Listening on udp:%s:%d%n",
+//                InetAddress.getByName("0.0.0.0"), port);
         DatagramSocket  socket = new DatagramSocket(port, InetAddress.getByName(broadcastListener));
         byte[] receiveData = new byte[256];
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                 receiveData.length);
-        System.out.println("Listen " + port);
         boolean run = true;
         while(run) {
             socket.receive(receivePacket);
@@ -72,7 +71,6 @@ public class UDPServer{
                         controller.responseInvitation(receivePacket.getAddress().getHostAddress());
                         break;
                     case "05":
-                        System.out.println(message);
                         String[] parts = MessageInterpreter.getData(message).split("\\|");
                         int port = Integer.valueOf(parts[1]);
                         controller.responseConfirmation(receivePacket.getAddress().getHostAddress(), port);
@@ -81,7 +79,7 @@ public class UDPServer{
                         controller.startGame();
                         break;
                 }
-                System.out.println("RECEIVED: " + message);
+//                System.out.println("RECEIVED: " + message);
             }
         }
         socket.close();

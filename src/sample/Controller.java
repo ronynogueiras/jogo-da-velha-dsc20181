@@ -158,6 +158,24 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    public void newMatch() {
+        System.out.println("NEW MATCH");
+    }
+    public void startGame() {
+        try {
+            System.out.println("START GAME! ");
+            String type = isInvited ? "1" : "2";
+            if (tcpServer != null) {
+                tcpServer.send(MessageFormatter.format("07", type));
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void finishGame() {
+        System.out.println("FINISH GAME");
+    }
     public void setPosition(int pos) {
         if (board[pos] == ' ') {
             board[pos] = 'X';
@@ -197,26 +215,7 @@ public class Controller {
             System.out.println("HAS SELECTED!");
         }
     }
-    public void newMatch() {
-        System.out.println("NEW MATCH");
-    }
-    public void startGame() {
-        try {
-            System.out.println("START GAME! ");
-            if (playerIp != null) {
-                System.out.println("START GAME! 2");
-                String type = isInvited ? "1" : "2";
 
-                tcpServer.send(MessageFormatter.format("07", type));
-            }
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-    public void finishGame() {
-        System.out.println("FINISH GAME");
-    }
     @FXML
     private void initialize() {
         udpServer = new UDPServer().setController(this);
